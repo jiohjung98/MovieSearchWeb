@@ -1,7 +1,13 @@
 import { Component}  from '../core/heropy.js'
+import HeadLine from '../components/Headline.js'
 
 export default class Home extends Component { 
     render() {
-        this.el.innerHTML = '<h1>Hello World</h1>'
+        const headline = new HeadLine().el
+
+        this.el.classList.add('container')
+        this.el.append(
+            headline
+        )
     }
 }
