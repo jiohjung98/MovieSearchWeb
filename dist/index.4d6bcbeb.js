@@ -733,16 +733,19 @@ parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
 var _headlineJs = require("../components/Headline.js");
 var _headlineJsDefault = parcelHelpers.interopDefault(_headlineJs);
+var _searchJs = require("../components/Search.js");
+var _searchJsDefault = parcelHelpers.interopDefault(_searchJs);
 class Home extends (0, _heropyJs.Component) {
     render() {
         const headline = new (0, _headlineJsDefault.default)().el;
+        const search = new (0, _searchJsDefault.default)().el;
         this.el.classList.add("container");
-        this.el.append(headline);
+        this.el.append(headline, search);
     }
 }
 exports.default = Home;
 
-},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo"}],"gaVgo":[function(require,module,exports) {
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo","../components/Search.js":"jqPPz"}],"gaVgo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
@@ -763,6 +766,34 @@ class Headline extends (0, _heropyJs.Component) {
     }
 }
 exports.default = Headline;
+
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jqPPz":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropyJs = require("../core/heropy.js");
+class Search extends (0, _heropyJs.Component) {
+    render() {
+        this.el.classList.add("search");
+        this.el.innerHTML = /* html */ `
+            <input placeholder="Enter the movie title to search!"/>
+            <button class="btn btn-primary">
+                Search!
+            </button>
+        `;
+        const inputEl = this.el.querySelector("input");
+        inputEl.addEventListener("input", ()=>{
+        //
+        });
+        inputEl.addEventListener("keydown", (event)=>{
+            event.key;
+        });
+        const btnEl = this.el.querySelector("button");
+        btnEl.addEventListener("click", ()=>{
+        // 
+        });
+    }
+}
+exports.default = Search;
 
 },{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
 
