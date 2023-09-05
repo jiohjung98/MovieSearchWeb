@@ -735,17 +735,20 @@ var _headlineJs = require("../components/Headline.js");
 var _headlineJsDefault = parcelHelpers.interopDefault(_headlineJs);
 var _searchJs = require("../components/Search.js");
 var _searchJsDefault = parcelHelpers.interopDefault(_searchJs);
+var _movieListJs = require("../components/MovieList.js");
+var _movieListJsDefault = parcelHelpers.interopDefault(_movieListJs);
 class Home extends (0, _heropyJs.Component) {
     render() {
         const headline = new (0, _headlineJsDefault.default)().el;
         const search = new (0, _searchJsDefault.default)().el;
+        const movieList = new (0, _movieListJsDefault.default)().el;
         this.el.classList.add("container");
-        this.el.append(headline, search);
+        this.el.append(headline, search, movieList);
     }
 }
 exports.default = Home;
 
-},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo","../components/Search.js":"jqPPz"}],"gaVgo":[function(require,module,exports) {
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo","../components/Search.js":"jqPPz","../components/MovieList.js":"8UDl3"}],"gaVgo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
@@ -809,11 +812,45 @@ const store = new (0, _heropyJs.Store)({
 });
 exports.default = store;
 const searchMovies = async (page)=>{
+    if (page === 1) {
+        store.state.page = 1;
+        store.state.movies = [];
+    }
     const res = await fetch(`https://omdbapi.com?apikey=4d2edd7&s=${store.state.searchText}&page=${page}`);
-    const json = await res.json();
-    console.log(json);
+    const { Search } = await res.json();
+    store.state.movies = [
+        ...store.state.movies,
+        ...Search
+    ];
 };
 
-},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8UDl3":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropyJs = require("../core/heropy.js");
+var _movieJs = require("../store/movie.js");
+var _movieJsDefault = parcelHelpers.interopDefault(_movieJs);
+class MovieList extends (0, _heropyJs.Component) {
+    constructor(){
+        super();
+        (0, _movieJsDefault.default).subscribe("movies", ()=>{
+            this.render();
+        });
+    }
+    render() {
+        this.el.classList.add("movie-list");
+        this.el.innerHTML = /* html */ `
+            <div class="movies"></div>
+        `;
+        const moviesEl = this.el.querySelector(".movies");
+        moviesEl.append(// map() - 배열에서 사용하는 프로토타입 메소드로, 앞에 붙어있는 배열데이터를 기준으로 콜백함수를 반복실행하고 반환된 새로운 결과 반환
+        (0, _movieJsDefault.default).state.movies.map((movie)=>{
+            return movie.Title;
+        }));
+    }
+}
+exports.default = MovieList;
+
+},{"../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../core/heropy.js":"57bZf"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
 
 //# sourceMappingURL=index.4d6bcbeb.js.map
