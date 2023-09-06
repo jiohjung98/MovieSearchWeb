@@ -830,6 +830,8 @@ parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
 var _movieJs = require("../store/movie.js");
 var _movieJsDefault = parcelHelpers.interopDefault(_movieJs);
+var _movieItemJs = require("./MovieItem.js");
+var _movieItemJsDefault = parcelHelpers.interopDefault(_movieItemJs);
 class MovieList extends (0, _heropyJs.Component) {
     constructor(){
         super();
@@ -844,13 +846,42 @@ class MovieList extends (0, _heropyJs.Component) {
         `;
         const moviesEl = this.el.querySelector(".movies");
         moviesEl.append(// map() - 배열에서 사용하는 프로토타입 메소드로, 앞에 붙어있는 배열데이터를 기준으로 콜백함수를 반복실행하고 반환된 새로운 결과 반환
-        (0, _movieJsDefault.default).state.movies.map((movie)=>{
-            return movie.Title;
-        }));
+        ...(0, _movieJsDefault.default).state.movies.map((movie)=>new (0, _movieItemJsDefault.default)({
+                movie
+            }).el));
     }
 }
 exports.default = MovieList;
 
-},{"../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../core/heropy.js":"57bZf"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
+},{"../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../core/heropy.js":"57bZf","./MovieItem.js":"fAzE8"}],"fAzE8":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropyJs = require("../core/heropy.js");
+class MovieItem extends (0, _heropyJs.Component) {
+    constructor(props){
+        super({
+            props,
+            tagName: "a"
+        });
+    }
+    render() {
+        const { movie } = this.props;
+        this.el.setAttribute("href", `#/movie?id=${movie.imdbID}`);
+        this.el.classList.add("movie");
+        this.el.style.backgroundImage = `url(${movie.Poster})`;
+        this.el.innerHTML = /* html */ `
+        <div class="info">
+            <div class="year">
+                ${movie.Year}
+            </div>
+            <div class="title">
+                ${movie.Title}
+            </div>
+        </div>`;
+    }
+}
+exports.default = MovieItem;
+
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
 
 //# sourceMappingURL=index.4d6bcbeb.js.map
