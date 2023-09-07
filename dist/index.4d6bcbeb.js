@@ -720,14 +720,20 @@ parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
 var _homeJs = require("./Home.js");
 var _homeJsDefault = parcelHelpers.interopDefault(_homeJs);
+var _movieJs = require("./Movie.js");
+var _movieJsDefault = parcelHelpers.interopDefault(_movieJs);
 exports.default = (0, _heropyJs.createRouter)([
     {
         path: "#/",
         component: (0, _homeJsDefault.default)
+    },
+    {
+        path: "#/movie",
+        component: (0, _movieJsDefault.default)
     }
 ]);
 
-},{"../core/heropy.js":"57bZf","./Home.js":"0JSNG","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"0JSNG":[function(require,module,exports) {
+},{"../core/heropy.js":"57bZf","./Home.js":"0JSNG","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Movie.js":"1LTyN"}],"0JSNG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
@@ -807,12 +813,14 @@ exports.default = Search;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "searchMovies", ()=>searchMovies);
+parcelHelpers.export(exports, "getMovieDetails", ()=>getMovieDetails);
 var _heropyJs = require("../core/heropy.js");
 const store = new (0, _heropyJs.Store)({
     searchText: "",
     page: 1,
     pageMax: 1,
     movies: [],
+    movie: {},
     loading: false,
     message: "Search for the movie title!"
 });
@@ -838,6 +846,14 @@ const searchMovies = async (page)=>{
         console.log("searchMovies error:", error);
     } finally{
         store.state.loading = false;
+    }
+};
+const getMovieDetails = async (id)=>{
+    try {
+        const res = await fetch(`https://omdbapi.com?apikey=4d2edd7&i=${id}&plot=full`);
+        store.state.movie = await res.json();
+    } catch (error) {
+        console.log("getMovieDetails error:", error);
     }
 };
 
@@ -948,6 +964,20 @@ class MovieListMore extends (0, _heropyJs.Component) {
     }
 }
 exports.default = MovieListMore;
+
+},{"../core/heropy.js":"57bZf","../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1LTyN":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropyJs = require("../core/heropy.js");
+var _movieJs = require("../store/movie.js");
+var _movieJsDefault = parcelHelpers.interopDefault(_movieJs);
+class Movie extends (0, _heropyJs.Component) {
+    async render() {
+        await (0, _movieJs.getMovieDetails)(history.state.id);
+        console.log((0, _movieJsDefault.default).state.movie);
+    }
+}
+exports.default = Movie;
 
 },{"../core/heropy.js":"57bZf","../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
 
