@@ -737,18 +737,21 @@ var _searchJs = require("../components/Search.js");
 var _searchJsDefault = parcelHelpers.interopDefault(_searchJs);
 var _movieListJs = require("../components/MovieList.js");
 var _movieListJsDefault = parcelHelpers.interopDefault(_movieListJs);
+var _movieListMoreJs = require("../components/MovieListMore.js");
+var _movieListMoreJsDefault = parcelHelpers.interopDefault(_movieListMoreJs);
 class Home extends (0, _heropyJs.Component) {
     render() {
         const headline = new (0, _headlineJsDefault.default)().el;
         const search = new (0, _searchJsDefault.default)().el;
         const movieList = new (0, _movieListJsDefault.default)().el;
+        const movieListMore = new (0, _movieListMoreJsDefault.default)().el;
         this.el.classList.add("container");
-        this.el.append(headline, search, movieList);
+        this.el.append(headline, search, movieList, movieListMore);
     }
 }
 exports.default = Home;
 
-},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo","../components/Search.js":"jqPPz","../components/MovieList.js":"8UDl3"}],"gaVgo":[function(require,module,exports) {
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline.js":"gaVgo","../components/Search.js":"jqPPz","../components/MovieList.js":"8UDl3","../components/MovieListMore.js":"3ZUar"}],"gaVgo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropyJs = require("../core/heropy.js");
@@ -808,20 +811,20 @@ var _heropyJs = require("../core/heropy.js");
 const store = new (0, _heropyJs.Store)({
     searchText: "",
     page: 1,
+    pageMax: 1,
     movies: []
 });
 exports.default = store;
 const searchMovies = async (page)=>{
-    if (page === 1) {
-        store.state.page = 1;
-        store.state.movies = [];
-    }
+    store.state.page = page;
+    if (page === 1) store.state.movies = [];
     const res = await fetch(`https://omdbapi.com?apikey=4d2edd7&s=${store.state.searchText}&page=${page}`);
-    const { Search } = await res.json();
+    const { Search, totalResults } = await res.json();
     store.state.movies = [
         ...store.state.movies,
         ...Search
     ];
+    store.state.pageMax = Math.ceil(Number(totalResults) / 10);
 };
 
 },{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8UDl3":[function(require,module,exports) {
@@ -882,6 +885,39 @@ class MovieItem extends (0, _heropyJs.Component) {
 }
 exports.default = MovieItem;
 
-},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
+},{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3ZUar":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropyJs = require("../core/heropy.js");
+var _movieJs = require("../store/movie.js");
+var _movieJsDefault = parcelHelpers.interopDefault(_movieJs);
+class MovieListMore extends (0, _heropyJs.Component) {
+    constructor(){
+        super({
+            tagName: "button"
+        });
+        (0, _movieJsDefault.default).subscribe("pageMax", ()=>{
+            // movieStore.state.page
+            // movieStore.state.pageMax
+            const { page, pageMax } = (0, _movieJsDefault.default).state;
+            pageMax > page ? this.el.classList.remove("hide") : this.el.classList.add("hide");
+        // if (pageMax > page) {
+        //     this.el.classList.remove('hide')
+        // } else {
+        //     this.el.classList.add('hide')
+        // }
+        });
+    }
+    render() {
+        this.el.classList.add("btn", "view-more", "hide");
+        this.el.textContent = "View more...";
+        this.el.addEventListener("click", async ()=>{
+            await (0, _movieJs.searchMovies)((0, _movieJsDefault.default).state.page + 1);
+        });
+    }
+}
+exports.default = MovieListMore;
+
+},{"../core/heropy.js":"57bZf","../store/movie.js":"kq1bo","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["f3BSW","gLLPy"], "gLLPy", "parcelRequiree915")
 
 //# sourceMappingURL=index.4d6bcbeb.js.map
