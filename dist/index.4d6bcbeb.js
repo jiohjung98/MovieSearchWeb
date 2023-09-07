@@ -813,21 +813,32 @@ const store = new (0, _heropyJs.Store)({
     page: 1,
     pageMax: 1,
     movies: [],
-    loading: false
+    loading: false,
+    message: "Search for the movie title!"
 });
 exports.default = store;
 const searchMovies = async (page)=>{
     store.state.loading = true;
     store.state.page = page;
-    if (page === 1) store.state.movies = [];
-    const res = await fetch(`https://omdbapi.com?apikey=4d2edd7&s=${store.state.searchText}&page=${page}`);
-    const { Search, totalResults } = await res.json();
-    store.state.movies = [
-        ...store.state.movies,
-        ...Search
-    ];
-    store.state.pageMax = Math.ceil(Number(totalResults) / 10);
-    store.state.loading = false;
+    if (page === 1) {
+        store.state.movies = [];
+        store.state.message = "";
+    }
+    try {
+        const res = await fetch(`https://omdbapi.com?apikey=4d2edd7&s=${store.state.searchText}&page=${page}`);
+        const { Search, totalResults, Response, Error } = await res.json();
+        if (Response === "True") {
+            store.state.movies = [
+                ...store.state.movies,
+                ...Search
+            ];
+            store.state.pageMax = Math.ceil(Number(totalResults) / 10);
+        } else store.state.message = Error;
+    } catch (error) {
+        console.log("searchMovies error:", error);
+    } finally{
+        store.state.loading = false;
+    }
 };
 
 },{"../core/heropy.js":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8UDl3":[function(require,module,exports) {
@@ -847,15 +858,25 @@ class MovieList extends (0, _heropyJs.Component) {
         (0, _movieJsDefault.default).subscribe("loading", ()=>{
             this.render();
         });
+        (0, _movieJsDefault.default).subscribe("message", ()=>{
+            this.render();
+        });
     }
+    // render() {
+    //     this.el.classList.add('movie-list')
+    //     this.el.innerHTML = /* html */ `
+    //     <div class='movies'></div>
+    //     <div class='the-loader hide'></div>`
     render() {
         this.el.classList.add("movie-list");
         this.el.innerHTML = /* html */ `
-            <div class="movies"></div>
+            ${(0, _movieJsDefault.default).state.message ? `<div class="message">${(0, _movieJsDefault.default).state.message}</div>` : '<div class="movies"></div>'}
             <div class='the-loader hide'></div>
         `;
         const moviesEl = this.el.querySelector(".movies");
-        moviesEl.append(// map() - 배열에서 사용하는 프로토타입 메소드로, 앞에 붙어있는 배열데이터를 기준으로 콜백함수를 반복실행하고 반환된 새로운 결과 반환
+        // ?. - 선택적 체이닝
+        // moviesEl이 존재할 때만 append 메소드 동작
+        moviesEl?.append(// map() - 배열에서 사용하는 프로토타입 메소드로, 앞에 붙어있는 배열데이터를 기준으로 콜백함수를 반복실행하고 반환된 새로운 결과 반환
         ...(0, _movieJsDefault.default).state.movies.map((movie)=>new (0, _movieItemJsDefault.default)({
                 movie
             }).el));
@@ -921,6 +942,7 @@ class MovieListMore extends (0, _heropyJs.Component) {
         this.el.classList.add("btn", "view-more", "hide");
         this.el.textContent = "View more...";
         this.el.addEventListener("click", async ()=>{
+            this.el.classList.add("hide");
             await (0, _movieJs.searchMovies)((0, _movieJsDefault.default).state.page + 1);
         });
     }
